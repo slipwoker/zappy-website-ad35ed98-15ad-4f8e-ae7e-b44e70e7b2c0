@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <title>וובינר vibe coding למתכנתים — vibe coding with Maor</title>
+    <meta name="description" content="A landing page for a live online webinar about &#39;Vibe Coding&#39; — a modern, trending approach to software development. The event takes place on Monday, May 4th, 20">
+    <meta name="keywords" content="וובינר vibe coding למתכנתים, אירוע פיתוח תוכנה מאי 2026, וובינר פיתוח תוכנה למנהלי צוותים, כלי AI לפיתוח תוכנה מהיר">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Zappy Analytics -->
+<script>
+(function() {
+  'use strict';
+  
+  // Configuration
+  var config = {
+    websiteId: 'ad35ed98-15ad-4f8e-ae7e-b44e70e7b2c0',
+    apiUrl: 'https://qaapi.zappy5.com/api/analytics/track',
+    sessionDuration: 30 * 60 * 1000, // 30 minutes
+    visitorDuration: 30 * 24 * 60 * 60 * 1000, // 30 days
+    trackPageViews: true,
+    trackClicks: true,
+    trackFormSubmissions: true
+  };
+  
+  // Generate or retrieve persistent visitor ID (30 days)
+  function getVisitorId() {
+    var visitorKey = 'zappy_visitor_' + config.websiteId;
+    var visitor = null;
+    
+    try {
+      visitor = localStorage.getItem(visitorKey);
+      if (visitor) {
+        var visitorData = JSON.parse(visitor);
+        var now = Date.now();
+        
+        // Check if visitor ID is still valid (30 days)
+        if (now - visitorData.created < config.visitorDuration) {
+          // Update last seen timestamp
+          visitorData.lastSeen = now;
+          localStorage.setItem(visitorKey, JSON.stringify(visitorData));
+          return visitorData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: LocalStorage not available');
+    }
+    
+    // Generate new visitor ID
+    var newVisitorId = 'zv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      localStorage.setItem(visitorKey, JSON.stringify({
+        id: newVisitorId,
+        created: Date.now(),
+        lastSeen: Date.now()
+      }));
+    } catch (e) {
+      // Continue without local storage
+    }
+    
+    return newVisitorId;
+  }
+  
+  // Generate or retrieve session ID (30 minutes)
+  function getSessionId() {
+    var sessionKey = 'zappy_session_' + config.websiteId;
+    var session = null;
+    
+    try {
+      session = sessionStorage.getItem(sessionKey);
+      if (session) {
+        var sessionData = JSON.parse(session);
+        var now = Date.now();
+        
+        // Check if session is still valid
+        if (now - sessionData.timestamp < config.sessionDuration) {
+          // Update timestamp
+          sessionData.timestamp = now;
+          sessionStorage.setItem(sessionKey, JSON.stringify(sessionData));
+          return sessionData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: SessionStorage not available');
+    }
+    
+    // Generate new session ID
+    var newSessionId = 'zs_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      sessionStorage.setItem(sessionKey, JSON.stringify({
+        id: newSessionId,
+        timestamp: Date.now()
+      }));
+    } catch (e) {
+      // Continue without session storage
+    }
+    
+    return newSessionId;
+  }
+  
+  var visitorId = getVisitorId();
+  var sessionId = getSessionId();
+  
+  // Track an event
+  function trackEvent(eventType, data) {
+    data = data || {};
+    
+    var eventData = {
+      website_id: config.websiteId,
+      event_type: eventType,
+      page_path: window.location.pathname,
+      referrer: document.referrer || 'direct',
+      visitor_id: visitorId,
+      session_id: sessionId,
+      metadata: data
+    };
+    
+    // Use sendBeacon if available (better for page unload events)
+    if (navigator.sendBeacon) {
+      var blob = new Blob([JSON.stringify(eventData)], { type: 'application/json' });
+      navigator.sendBeacon(config.apiUrl, blob);
+    } else {
+      // Fallback to fetch
+      fetch(config.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData),
+        keepalive: true
+      }).catch(function(error) {
+        console.warn('Zappy Analytics: Failed to track event', error);
+      });
+    }
+  }
+  
+  // Track page view
+  if (config.trackPageViews) {
+    trackEvent('pageview', {
+      title: document.title,
+      url: window.location.href
+    });
+  }
+  
+  // Track clicks on important elements
+  if (config.trackClicks) {
+    document.addEventListener('click', function(e) {
+      var target = e.target;
+      
+      // Track button clicks (counted as actions)
+      if (target.tagName === 'BUTTON' || target.closest('button')) {
+        var button = target.tagName === 'BUTTON' ? target : target.closest('button');
+        trackEvent('click', {
+          element: 'button',
+          text: button.textContent.trim().substring(0, 100),
+          id: button.id || null,
+          class: button.className || null
+        });
+      }
+      
+      // Track link clicks (navigation - not counted as actions)
+      else if (target.tagName === 'A' || target.closest('a')) {
+        var link = target.tagName === 'A' ? target : target.closest('a');
+        trackEvent('navigation', {
+          element: 'link',
+          text: link.textContent.trim().substring(0, 100),
+          href: link.href,
+          external: link.hostname !== window.location.hostname
+        });
+      }
+    }, true);
+  }
+  
+  // Track form submissions
+  if (config.trackFormSubmissions) {
+    document.addEventListener('submit', function(e) {
+      var form = e.target;
+      
+      trackEvent('form_submit', {
+        form_id: form.id || null,
+        form_name: form.name || null,
+        form_action: form.action || null,
+        form_method: form.method || 'GET'
+      });
+    }, true);
+  }
+  
+  // Track time on page (send on page unload)
+  var pageLoadTime = Date.now();
+  
+  window.addEventListener('beforeunload', function() {
+    var timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000); // in seconds
+    
+    trackEvent('page_unload', {
+      time_on_page: timeOnPage,
+      page_path: window.location.pathname
+    });
+  });
+  
+  // Expose tracking function globally for custom events
+  window.zappyAnalytics = {
+    track: trackEvent,
+    getVisitorId: function() { return visitorId; },
+    getSessionId: function() { return sessionId; }
+  };
+  
+})();
+</script>
+<!-- End Zappy Analytics -->
+    <meta property="og:title" content="וובינר vibe coding למתכנתים — vibe coding with Maor">
+    <meta property="og:description" content="A landing page for a live online webinar about &#39;Vibe Coding&#39; — a modern, trending approach to software development. The event takes place on Monday, May 4th, 20">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="וובינר vibe coding למתכנתים — vibe coding with Maor">
+    <meta name="twitter:description" content="A landing page for a live online webinar about &#39;Vibe Coding&#39; — a modern, trending approach to software development. The event takes place on Monday, May 4th, 20">
+    <meta property="og:type" content="website">
+  <meta property="og:locale" content="he_IL">
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Cookie Consent -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.css">
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.umd.js"></script>
+    <!-- Mickidum Accessibility Toolbar -->
+    <script src="https://cdn.jsdelivr.net/gh/mickidum/acc_toolbar/acctoolbar/acctoolbar.min.js"></script>
+    <link rel="stylesheet" href="/styles.css">
+
+    <style id="zappy-dropdown-submenu-styles">
+      /* ========== DESKTOP DROPDOWN SUBMENU STYLES ========== */
+      /* Base styles for dropdown submenus - parent must be positioned */
+      .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { position: relative; }
+      /* Submenu base - hidden by default */
+      .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { display: block !important; position: absolute !important; top: 100%; left: 0; min-width: 220px; background: white; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); padding: 8px 0; opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s ease; z-index: 1000; list-style: none; pointer-events: none; }
+      /* CRITICAL: Desktop hover styles to show dropdown */
+      .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Submenu item styling */
+      .sub-menu li { list-style: none; margin: 0; padding: 0; }
+      .sub-menu a { display: block !important; padding: 10px 16px !important; color: var(--text-dark, #333) !important; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background-color 0.2s; }
+      .sub-menu .zappy-nav-child > a { padding-left: 28px !important; font-size: 0.9em !important; opacity: 0.85 !important; }
+      [dir="rtl"] .sub-menu .zappy-nav-child > a, html[lang="he"] .sub-menu .zappy-nav-child > a, html[lang="ar"] .sub-menu .zappy-nav-child > a { padding-left: 10px !important; padding-right: 28px !important; }
+      .sub-menu .zappy-nav-parent > a { font-weight: 600 !important; }
+      .sub-menu a:hover { background-color: #f5f5f5; }
+      /* RTL (Hebrew/Arabic) dropdown positioning */
+      [dir="rtl"] .nav-menu .sub-menu, [dir="rtl"] nav .sub-menu, [dir="rtl"] .navbar .sub-menu, html[lang="he"] .nav-menu .sub-menu, html[lang="he"] nav .sub-menu, html[lang="he"] .navbar .sub-menu, html[lang="ar"] .nav-menu .sub-menu, html[lang="ar"] nav .sub-menu, html[lang="ar"] .navbar .sub-menu { left: auto !important; right: 0 !important; }
+      /* Hide empty dropdown menus (exclude catalog sub-menus that use <a> children instead of <li>) */
+      .sub-menu:empty, .sub-menu:not(:has(li:not(.zappy-hidden-menu-item))):not(:has(> a)), .sub-menu:not(:has(li)):not(:has(> a)) { display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+      /* Desktop: show submenu on Menu Group hover */
+      li:has(.menu-group-title):hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Menu Group title styling */
+      .nav-menu > li > .menu-group-title, #navMenu > li > .menu-group-title { display: inline-block; padding: 0.5rem 1rem; cursor: default; user-select: none; }
+      
+      /* ========== MOBILE SUBMENU STYLES ========== */
+      @media (max-width: 768px) {
+        .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { position: static !important; transform: none !important; box-shadow: none !important; background: transparent !important; max-height: 0; overflow: hidden; opacity: 0; visibility: hidden; transition: max-height 0.3s ease, opacity 0.3s ease; padding: 0 !important; border-radius: 0 !important; }
+        .navbar .sub-menu.mobile-expanded, .nav-menu .sub-menu.mobile-expanded, #navMenu .sub-menu.mobile-expanded { max-height: none !important; overflow-y: visible !important; opacity: 1 !important; visibility: visible !important; padding: 8px 0 8px 16px !important; }
+        [dir="rtl"] .sub-menu.mobile-expanded, html[lang="he"] .sub-menu.mobile-expanded { padding: 8px 16px 8px 0 !important; }
+        /* Disable hover behavior on mobile */
+        .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 0; visibility: hidden; pointer-events: none; }
+        .nav-menu li > .sub-menu.mobile-expanded, nav li > .sub-menu.mobile-expanded, .navbar li > .sub-menu.mobile-expanded, #navMenu li > .sub-menu.mobile-expanded { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+        .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { display: flex !important; flex-wrap: wrap !important; align-items: center !important; position: relative !important; min-height: 44px !important; }
+        .nav-menu li:has(.sub-menu) > a, nav li:has(.sub-menu) > a, .navbar li:has(.sub-menu) > a, #navMenu li:has(.sub-menu) > a { flex: 1 !important; min-width: 0 !important; }
+        .nav-menu li:has(.sub-menu) > .menu-group-title, nav li:has(.sub-menu) > .menu-group-title, .navbar li:has(.sub-menu) > .menu-group-title, #navMenu li:has(.sub-menu) > .menu-group-title { flex: 1 !important; min-width: 0 !important; padding: 0 !important; line-height: inherit !important; }
+        .nav-menu li:has(.sub-menu) > .sub-menu, nav li:has(.sub-menu) > .sub-menu, .navbar li:has(.sub-menu) > .sub-menu, #navMenu li:has(.sub-menu) > .sub-menu { flex-basis: 100% !important; width: 100% !important; }
+        .nav-menu li:has(.sub-menu) > a [class*="chevron"], .nav-menu li:has(.sub-menu) > a [class*="arrow"], .nav-menu li:has(.sub-menu) > a .fa-chevron-down, .nav-menu li:has(.sub-menu) > a .fa-angle-down, nav li:has(.sub-menu) > a [class*="chevron"], nav li:has(.sub-menu) > a [class*="arrow"], #navMenu li:has(.sub-menu) > a [class*="chevron"], #navMenu li:has(.sub-menu) > a [class*="arrow"] { display: none !important; visibility: hidden !important; }
+        .mobile-submenu-toggle { display: flex !important; align-items: center !important; justify-content: center !important; width: 44px !important; height: auto !important; background: transparent !important; border: none !important; cursor: pointer !important; color: var(--text-dark) !important; position: static !important; flex-shrink: 0 !important; align-self: stretch !important; z-index: 2 !important; padding: 0 !important; margin: 0 !important; }
+        .mobile-submenu-toggle::after { content: '' !important; width: 0 !important; height: 0 !important; border-left: 6px solid transparent !important; border-right: 6px solid transparent !important; border-top: 7px solid currentColor !important; transition: transform 0.3s ease !important; }
+        .mobile-submenu-toggle.expanded::after { transform: rotate(180deg) !important; }
+        .sub-menu a { padding: 10px 0 !important; display: block !important; color: var(--text-dark) !important; white-space: normal !important; }
+        .sub-menu .zappy-nav-child > a { padding-left: 28px !important; font-size: 0.9em !important; opacity: 0.85 !important; }
+        [dir="rtl"] .sub-menu .zappy-nav-child > a, html[lang="he"] .sub-menu .zappy-nav-child > a, html[lang="ar"] .sub-menu .zappy-nav-child > a { padding-left: 0 !important; padding-right: 28px !important; }
+        .sub-menu .zappy-nav-parent > a { font-weight: 600 !important; }
+        .nav-menu.active, #navMenu.active { max-width: 100vw !important; overflow-x: hidden !important; box-sizing: border-box !important; }
+        .navbar .sub-menu li a, nav.navbar .sub-menu li a, .zappy-products-dropdown .sub-menu a { color: var(--text-dark) !important; }
+      }
+      @media (min-width: 769px) { .mobile-submenu-toggle { display: none !important; } }
+    </style>
+
+    <style id="zappy-widget-visibility">
+      #mic-access-tool-general-button, .mic-access-tool-general-button,
+      #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
+      ._access-icon, #mic-access-tool-box, .mic-access-tool-box,
+      #mic-init-access-tool #mic-access-tool-box, div[id*="mic-access-tool-box"], ._access-menu {
+        display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;
+      }
+    </style>
+</head>
+<body>
+
+  <nav class="navbar" dir="rtl">
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+    <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display: none;">
+      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+  </button>
+
+  <button class="phone-header-btn" data-phone="" aria-label="Call">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+    </svg>
+  </button>
+
+  <div class="nav-container">
+    <div class="nav-right-group"><div class="nav-brand">
+      <a href="/" class="logo-link">
+        <img src="/assets/vibe-coding-with-maor-logo.webp" alt="vibe coding with Maor" class="logo">
+      </a>
+    </div><ul class="nav-menu" id="navMenu"><li><a href="#features">תכונות</a></li><li><a href="#about">אודות</a></li><li><a href="#testimonials">המלצות</a></li><li><a href="#stats">נתונים</a></li></ul></div>
+
+    
+
+    <div class="nav-cta-container">
+      <a href="#cta" class="nav-cta-btn">צור קשר</a>
+    </div>
+  </div>
+</nav>
+<script>
+
+// Navbar Mobile Menu Toggle and Contrast Fix
+(function() {
+  // Use 'load' event instead of 'DOMContentLoaded' to ensure we run AFTER all other scripts
+  window.addEventListener('load', function() {
+    
+    // FIX MOBILE BUTTON CONTRAST
+    // Detect navbar background color and apply contrasting color to mobile buttons
+    const navbar = document.querySelector('.navbar, nav, header');
+    if (!navbar) {
+      console.log('[Navbar] Navbar element not found');
+      return;
+    }
+    
+    // DECLARE VARIABLES EARLY to avoid Temporal Dead Zone errors
+    // These are used in multiple places below
+    let mobileToggle = document.getElementById('mobileToggle') ||
+                       document.querySelector('.mobile-toggle') ||
+                       document.querySelector('.hamburger') ||
+                       document.querySelector('.hamburger-menu') ||
+                       document.querySelector('.menu-toggle') ||
+                       document.querySelector('.burger-menu') ||
+                       document.querySelector('[aria-label="Menu"]') ||
+                       document.querySelector('[aria-label="תפריט"]');
+    
+    const phoneBtn = document.querySelector('.phone-header-btn');
+    
+    const computedStyle = window.getComputedStyle(navbar);
+    let bgColor = computedStyle.backgroundColor;
+    
+    console.log('[Navbar] Initial navbar background:', bgColor);
+    
+    // Check if background is transparent or rgba with 0 alpha
+    const isTransparent = bgColor === 'transparent' || 
+                         bgColor === 'rgba(0, 0, 0, 0)' ||
+                         (bgColor.startsWith('rgba') && bgColor.includes(', 0)'));
+    
+    if (isTransparent) {
+      // Check for background-image or gradient
+      const bgImage = computedStyle.backgroundImage;
+      if (bgImage && bgImage !== 'none') {
+        console.log('[Navbar] Navbar has background image/gradient, using dark text');
+        bgColor = 'rgb(240, 240, 240)'; // Assume light background
+      } else {
+        // Transparent navbar - check body background
+        const bodyBg = window.getComputedStyle(document.body).backgroundColor;
+        console.log('[Navbar] Navbar transparent, using body background:', bodyBg);
+        bgColor = bodyBg;
+      }
+    }
+    
+    // Calculate luminance to determine if background is light or dark
+    const rgb = bgColor.match(/\d+/g);
+    if (rgb && rgb.length >= 3) {
+      const r = parseInt(rgb[0]);
+      const g = parseInt(rgb[1]);
+      const b = parseInt(rgb[2]);
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      
+      // Mobile button colors are set by Claude's AI-generated CSS (same as .nav-menu a)
+      // No dynamic color overrides needed - colors come from the generated navbar CSS
+      console.log('[Navbar] Mobile button colors preserved from Claude CSS (luminance:', luminance.toFixed(2) + ')');
+      
+      // FIX ICON SIZES - Ensure SVGs are properly sized and visible
+      // INJECT CRITICAL CSS TO OVERRIDE ANY CONFLICTING RULES
+      const criticalCSS = document.createElement('style');
+      criticalCSS.id = 'zappy-mobile-nav-fix';
+      const htmlLang = document.documentElement.lang || 'en';
+      const htmlDir = document.documentElement.dir || 'ltr';
+      // Check both dir attribute AND lang for RTL detection
+      // dir="rtl" is the most reliable indicator
+      const isRTL = htmlDir === 'rtl' || htmlLang === 'he' || htmlLang === 'ar';
+      
+      criticalCSS.textContent = `
+        /* Hide mobile buttons on desktop, show only on mobile */
+        @media (min-width: 769px) {
+          .mobile-toggle,
+          .phone-header-btn {
+            display: none !important;
+          }
+        }
+        
+        /* Show and position mobile buttons correctly on mobile */
+        @media (max-width: 768px) {
+          .mobile-toggle,
+          .phone-header-btn {
+            position: absolute !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            z-index: 1001 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            border: none !important;
+            cursor: pointer !important;
+            padding: 6px !important;
+            background: none !important;
+            color: var(--nav-text, var(--text-dark)) !important;
+          }
+          
+          /* LTR positioning (default): hamburger LEFT, phone RIGHT */
+          html:not([dir="rtl"]):not([lang="he"]):not([lang="ar"]) .mobile-toggle,
+          html[dir="ltr"] .mobile-toggle {
+            left: 12px !important;
+            right: auto !important;
+          }
+          html:not([dir="rtl"]):not([lang="he"]):not([lang="ar"]) .phone-header-btn,
+          html[dir="ltr"] .phone-header-btn {
+            right: 12px !important;
+            left: auto !important;
+          }
+          
+          /* RTL positioning: hamburger RIGHT, phone LEFT */
+          html[dir="rtl"] .mobile-toggle,
+          html[lang="he"] .mobile-toggle,
+          html[lang="ar"] .mobile-toggle {
+            right: 12px !important;
+            left: auto !important;
+          }
+          html[dir="rtl"] .phone-header-btn,
+          html[lang="he"] .phone-header-btn,
+          html[lang="ar"] .phone-header-btn {
+            left: 12px !important;
+            right: auto !important;
+          }
+          
+          /* CRITICAL: Ensure nav-container has min-height on mobile */
+          /* All children are positioned absolutely/fixed on mobile, so height:auto collapses to 0 */
+          .nav-container {
+            min-height: 70px !important;
+            position: relative !important;
+          }
+          
+          /* Ensure SVG icons are properly sized and inherit color */
+          .mobile-toggle svg,
+          .phone-header-btn svg {
+            width: 24px !important;
+            height: 24px !important;
+            /* Don't force display - let JavaScript control hamburger/close toggle */
+          }
+          
+          /* Reset nav-cta-container on mobile - remove desktop box-shadow/padding */
+          /* that creates a visible ghost box when CTA button is hidden */
+          .nav-cta-container {
+            box-shadow: none !important;
+            padding: 0 !important;
+          }
+          
+          /* Hide nav-cta-container entirely on mobile when there's no lang-switcher */
+          /* (only the CTA button is inside, and it's hidden on mobile) */
+          .nav-cta-container:not(:has(.lang-switcher)) {
+            display: none !important;
+          }
+          
+          /* CRITICAL: Prevent hero image fade gradient from bleeding over headline text */
+          /* The .image-fade-gradient has bottom: -30px (extends below parent) */
+          /* On mobile stacked layout, this overlaps the h1 text below the image */
+          .hero-image-column {
+            overflow: hidden !important;
+          }
+          .image-fade-gradient {
+            bottom: 0 !important;
+          }
+          
+          /* Hide desktop language switcher on mobile - hamburger menu handles it */
+          /* High specificity to override stored CSS */
+          .lang-switcher,
+          .nav-cta-container .lang-switcher,
+          .nav-container .lang-switcher,
+          .navbar .lang-switcher,
+          .navbar .nav-cta-container .lang-switcher {
+            display: none !important;
+          }
+        }
+      `;
+      
+      // Remove existing fix if present and inject new one
+      const existing = document.getElementById('zappy-mobile-nav-fix');
+      if (existing) existing.remove();
+      document.head.appendChild(criticalCSS);
+      
+      console.log('[Navbar] Critical CSS injected for mobile nav positioning');
+      
+      // ONLY apply inline positioning styles on mobile viewport
+      // On desktop, the CSS handles hiding these buttons with display: none
+      // Inline styles were breaking desktop layout by overriding CSS
+      const isMobileViewport = window.innerWidth <= 768;
+      
+      if (mobileToggle) {
+        // Icon sizing applies to all viewports for consistency
+        const hamburgerIcon = mobileToggle.querySelector('.hamburger-icon');
+        const closeIcon = mobileToggle.querySelector('.close-icon');
+        
+        if (hamburgerIcon) {
+          hamburgerIcon.style.setProperty('width', '24px', 'important');
+          hamburgerIcon.style.setProperty('height', '24px', 'important');
+          hamburgerIcon.style.setProperty('display', 'block', 'important'); // Show hamburger by default
+        }
+        if (closeIcon) {
+          closeIcon.style.setProperty('width', '24px', 'important');
+          closeIcon.style.setProperty('height', '24px', 'important');
+          closeIcon.style.setProperty('display', 'none', 'important'); // Hide close icon by default
+        }
+        
+        // ONLY set positioning inline styles on mobile
+        if (isMobileViewport) {
+          mobileToggle.style.setProperty('position', 'absolute', 'important');
+          mobileToggle.style.setProperty('top', '50%', 'important');
+          mobileToggle.style.setProperty('transform', 'translateY(-50%)', 'important');
+          mobileToggle.style.setProperty('z-index', '1001', 'important');
+          
+          // Clear any inline left/right so CSS can take over based on html[dir]
+          mobileToggle.style.removeProperty('left');
+          mobileToggle.style.removeProperty('right');
+          
+          console.log('[Navbar] Mobile toggle positioning applied (mobile viewport)');
+        } else {
+          // On desktop, clear any positioning styles to let CSS handle it
+          mobileToggle.style.removeProperty('position');
+          mobileToggle.style.removeProperty('top');
+          mobileToggle.style.removeProperty('transform');
+          mobileToggle.style.removeProperty('z-index');
+          mobileToggle.style.removeProperty('left');
+          mobileToggle.style.removeProperty('right');
+          console.log('[Navbar] Desktop viewport - cleared mobile toggle inline positioning');
+        }
+      }
+      
+      if (phoneBtn) {
+        // Icon sizing applies to all viewports
+        const phoneIcon = phoneBtn.querySelector('svg');
+        if (phoneIcon) {
+          phoneIcon.style.width = '24px';
+          phoneIcon.style.height = '24px';
+          phoneIcon.setAttribute('width', '24');
+          phoneIcon.setAttribute('height', '24');
+        }
+        
+        // ONLY set positioning inline styles on mobile
+        if (isMobileViewport) {
+          phoneBtn.style.setProperty('position', 'absolute', 'important');
+          phoneBtn.style.setProperty('top', '50%', 'important');
+          phoneBtn.style.setProperty('transform', 'translateY(-50%)', 'important');
+          phoneBtn.style.setProperty('z-index', '1001', 'important');
+          
+          // Clear any inline left/right so CSS can take over based on html[dir]
+          phoneBtn.style.removeProperty('left');
+          phoneBtn.style.removeProperty('right');
+          
+          console.log('[Navbar] Phone button positioning applied (mobile viewport)');
+        } else {
+          // On desktop, clear any positioning styles to let CSS handle it
+          phoneBtn.style.removeProperty('position');
+          phoneBtn.style.removeProperty('top');
+          phoneBtn.style.removeProperty('transform');
+          phoneBtn.style.removeProperty('z-index');
+          phoneBtn.style.removeProperty('left');
+          phoneBtn.style.removeProperty('right');
+          console.log('[Navbar] Desktop viewport - cleared phone button inline positioning');
+        }
+      }
+    } else {
+      console.log('[Navbar] Could not parse background color:', bgColor);
+    }
+    
+    // MOBILE MENU TOGGLE
+    // Re-query in case DOM changed (mobileToggle already declared at top of function)
+    mobileToggle = document.getElementById('mobileToggle') ||
+                   document.querySelector('.mobile-toggle') ||
+                   document.querySelector('.hamburger') ||
+                   document.querySelector('.hamburger-menu') ||
+                   document.querySelector('.menu-toggle') ||
+                   document.querySelector('.burger-menu') ||
+                   document.querySelector('[aria-label="Menu"]') ||
+                   document.querySelector('[aria-label="תפריט"]');
+    
+    // EXPANDED SEARCH: Find nav menu by ID or class
+    const navMenu = document.getElementById('navMenu') ||
+                  document.querySelector('.nav-menu') ||
+                  document.querySelector('.nav-links') ||
+                  document.querySelector('nav ul:not(.submenu)');
+    
+    if (!mobileToggle || !navMenu) {
+      console.log('[Navbar] Mobile toggle or menu not found:', { toggle: !!mobileToggle, menu: !!navMenu });
+      return;
+    }
+    
+    // Ensure navMenu has ID for CSS targeting
+    if (!navMenu.id) {
+      navMenu.id = 'navMenu';
+    }
+    
+    console.log('[Navbar] Initializing mobile menu...');
+    
+    // Remove any existing event listeners by cloning the button
+    const newToggle = mobileToggle.cloneNode(true);
+    mobileToggle.parentNode.replaceChild(newToggle, mobileToggle);
+    
+    // Toggle menu on button click - use newToggle now
+    newToggle.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const hamburgerIcon = this.querySelector('.hamburger-icon');
+      const closeIcon = this.querySelector('.close-icon');
+      const isActive = navMenu.classList.contains('active');
+      
+      if (isActive) {
+        // Close menu
+        navMenu.classList.remove('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'block', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'none', 'important');
+        document.body.style.overflow = '';
+        console.log('[Navbar] Menu closed');
+      } else {
+        // Open menu
+        navMenu.classList.add('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'none', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'block', 'important');
+        document.body.style.overflow = 'hidden';
+        console.log('[Navbar] Menu opened');
+      }
+    });
+    
+    // Close menu when clicking nav links (but NOT dropdown toggles)
+    const navLinks = navMenu.querySelectorAll('a');
+    navLinks.forEach(function(link) {
+      link.addEventListener('click', function() {
+        // Don't close if it's a dropdown child (unless it's a real navigation link)
+        if (this.getAttribute('href') === '#') return;
+        
+        const hamburgerIcon = newToggle.querySelector('.hamburger-icon');
+        const closeIcon = newToggle.querySelector('.close-icon');
+        
+        navMenu.classList.remove('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'block', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'none', 'important');
+        document.body.style.overflow = '';
+        console.log('[Navbar] Menu closed (link clicked)');
+      });
+    });
+    
+    // DROPDOWN MENU TOGGLE (for mobile and touch devices)
+    var dropdownToggles = navMenu.querySelectorAll('.dropdown-toggle');
+    dropdownToggles.forEach(function(toggle) {
+      toggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var parent = this.closest('.nav-dropdown');
+        if (!parent) return;
+        
+        // Close other open dropdowns at the same level
+        var siblings = parent.parentNode.querySelectorAll('.nav-dropdown.open');
+        siblings.forEach(function(sib) {
+          if (sib !== parent) sib.classList.remove('open');
+        });
+        
+        parent.classList.toggle('open');
+        console.log('[Navbar] Dropdown toggled:', parent.classList.contains('open') ? 'open' : 'closed');
+      });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.nav-dropdown')) {
+        var openDropdowns = document.querySelectorAll('.nav-dropdown.open');
+        openDropdowns.forEach(function(dd) { dd.classList.remove('open'); });
+      }
+    });
+    
+    console.log('[Navbar] Dropdown handlers initialized for ' + dropdownToggles.length + ' dropdowns');
+    
+    // Phone button functionality (phoneBtn already declared at top of function)
+    if (phoneBtn) {
+      phoneBtn.addEventListener('click', function() {
+        // Get phone number from placeholder in page or use default
+        const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
+        const phoneNumber = phoneLinks.length > 0 
+          ? phoneLinks[0].getAttribute('href').replace('tel:', '')
+          : '[business_phone]';
+        
+        window.location.href = 'tel:' + phoneNumber;
+        console.log('[Navbar] Phone button clicked');
+      });
+    }
+    
+    console.log('[Navbar] Mobile menu initialized successfully');
+    
+    // === WHATSAPP BUTTON VISIBILITY FIX ===
+    // Ensure WhatsApp floating button is hidden on desktop and visible on mobile
+    // IMPORTANT: Only target the floating button by its class, NOT generic wa.me links
+    const handleWhatsAppVisibility = function() {
+      const whatsappBtn = document.querySelector('.whatsapp-float');
+      if (whatsappBtn) {
+        const isDesktop = window.innerWidth >= 769;
+        if (isDesktop) {
+          whatsappBtn.style.setProperty('display', 'none', 'important');
+          whatsappBtn.style.setProperty('visibility', 'hidden', 'important');
+          whatsappBtn.style.setProperty('opacity', '0', 'important');
+          whatsappBtn.style.setProperty('pointer-events', 'none', 'important');
+          console.log('[WhatsApp] Button hidden on desktop');
+        } else {
+          whatsappBtn.style.removeProperty('display');
+          whatsappBtn.style.removeProperty('visibility');
+          whatsappBtn.style.removeProperty('opacity');
+          whatsappBtn.style.removeProperty('pointer-events');
+          console.log('[WhatsApp] Button visible on mobile');
+        }
+      }
+    };
+    
+    // Run on load
+    handleWhatsAppVisibility();
+    
+    // Run on resize with debouncing
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(handleWhatsAppVisibility, 100);
+    });
+  });
+})();
+
+</script>
+  
+  <main>
+    <section class="index-hero-section" data-layout-spec="בית-hero" dir="rtl" data-hero-type="fullscreen-scrim">
+  <!-- Background Image -->
+  <div class="index-hero-bg-wrapper">
+    <img data-hero-bg="true" class="index-hero-bg-img" data-placeholder="index-hero-image-1" data-context="A dramatic, immersive deep-space coding environment: a developer silhouetted against a massive monitor displaying vibrant purple and cyan code, with aurora-like glows of violet and rose emanating from the screen, dark background with floating code snippets and digital particles, cinematic and futuristic atmosphere, high contrast, editorial tech photography style" width="1200" height="700" src="/assets/site-index-hero-image-1.webp" alt="וובינר vibe coding עם מאור - סביבת פיתוח עתידנית">
+  </div>
+
+  <!-- Scrim Overlay -->
+  <div class="index-hero-scrim" aria-hidden="true"></div>
+
+  <!-- Aurora Glow Decorative Blob -->
+  <div class="index-hero-aurora" aria-hidden="true"></div>
+
+  <!-- Floating Code Lines Decoration -->
+  <div class="index-hero-code-lines" aria-hidden="true">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 320 420" fill="none" xmlns="http://www.w3.org/2000/svg" width="320" height="420">
+      <text x="0" y="24" font-family="monospace" font-size="13" fill="#00D4FF" opacity="0.18">const vibe = () =&gt; {</text>
+      <text x="0" y="48" font-family="monospace" font-size="13" fill="#00D4FF" opacity="0.14">  return creativity++;</text>
+      <text x="0" y="72" font-family="monospace" font-size="13" fill="#00D4FF" opacity="0.18">};</text>
+      <text x="0" y="108" font-family="monospace" font-size="13" fill="#7B4FD4" opacity="0.16">import { flow } from 'mind';</text>
+      <text x="0" y="132" font-family="monospace" font-size="13" fill="#00D4FF" opacity="0.12">// build without limits</text>
+      <text x="0" y="168" font-family="monospace" font-size="13" fill="#7B4FD4" opacity="0.14">async function ship() {</text>
+      <text x="0" y="192" font-family="monospace" font-size="13" fill="#00D4FF" opacity="0.10">  await dream.code();</text>
+      <text x="0" y="216" font-family="monospace" font-size="13" fill="#7B4FD4" opacity="0.14">}</text>
+      <text x="0" y="252" font-family="monospace" font-size="13" fill="#E8426A" opacity="0.12">export default maor;</text>
+      <text x="0" y="288" font-family="monospace" font-size="13" fill="#00D4FF" opacity="0.10">// Monday 04.05.2026</text>
+      <text x="0" y="312" font-family="monospace" font-size="13" fill="#7B4FD4" opacity="0.14">while(learning) grow();</text>
+    </svg>
+  </div>
+
+  <!-- Hero Content -->
+  <div class="index-hero-container">
+    <div class="index-hero-content">
+
+      <!-- Event Badge -->
+      <div class="index-hero-badge">
+        <span class="index-hero-badge-dot" aria-hidden="true"></span>
+        <span>וובינר חי • יום שני, 04.05.2026</span>
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="index-hero-title">
+        <span class="index-hero-title-vibe">Vibe</span>
+        <span class="index-hero-title-coding"> Coding</span>
+        <br>
+        <span class="index-hero-title-with">עם מאור</span>
+      </h1>
+
+      <!-- Subtitle -->
+      <h3 class="index-hero-subtitle">
+        גלה את הדרך החדשה לכתוב קוד — בזרימה מלאה, עם AI, ובלי לעצור.
+      </h3>
+
+      <!-- Value Props -->
+      <ul class="index-hero-props" role="list">
+        <li>
+          <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="9" cy="9" r="9" fill="url(#vp1)"></circle><path d="M5 9l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><defs><linearGradient id="vp1" x1="0" y1="0" x2="18" y2="18" gradientUnits="userSpaceOnUse"><stop stop-color="#E8426A"></stop><stop offset="1" stop-color="#7B4FD4"></stop></linearGradient></defs></svg>
+          <span>טכניקות vibe coding מהשורה הראשונה</span>
+        </li>
+        <li>
+          <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="9" cy="9" r="9" fill="url(#vp2)"></circle><path d="M5 9l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><defs><linearGradient id="vp2" x1="0" y1="0" x2="18" y2="18" gradientUnits="userSpaceOnUse"><stop stop-color="#E8426A"></stop><stop offset="1" stop-color="#7B4FD4"></stop></linearGradient></defs></svg>
+          <span>שילוב AI בפיתוח יומיומי — בפועל</span>
+        </li>
+        <li>
+          <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="9" cy="9" r="9" fill="url(#vp3)"></circle><path d="M5 9l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><defs><linearGradient id="vp3" x1="0" y1="0" x2="18" y2="18" gradientUnits="userSpaceOnUse"><stop stop-color="#E8426A"></stop><stop offset="1" stop-color="#7B4FD4"></stop></linearGradient></defs></svg>
+          <span>סשן חי עם שאלות ותשובות בזמן אמת</span>
+        </li>
+      </ul>
+
+      <!-- CTA Buttons -->
+      <div class="index-hero-ctas">
+        <a href="#register" class="index-hero-btn-primary">
+          <svg data-element-type="icon" data-icon-type="svg" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm0 3.5v4.75l3 1.75-.75 1.3L9 11V5.5h1z" fill="currentColor"></path></svg>
+          הרשמה חינמית לוובינר
+        </a>
+        <a href="#about" class="index-hero-btn-secondary">
+          מה נלמד?
+        </a>
+      </div>
+
+      <!-- Date/Time Strip -->
+      <div class="index-hero-meta">
+        <div class="index-hero-meta-item">
+          <svg data-element-type="icon" data-icon-type="svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="2" y="3" width="12" height="11" rx="2" stroke="currentColor" stroke-width="1.4"></rect><path d="M2 7h12M5 1v3M11 1v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
+          <span>יום שני, 4 במאי 2026</span>
+        </div>
+        <div class="index-hero-meta-divider" aria-hidden="true"></div>
+        <div class="index-hero-meta-item">
+          <svg data-element-type="icon" data-icon-type="svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"></circle><path d="M8 4.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
+          <span>אונליין בזמן אמת</span>
+        </div>
+        <div class="index-hero-meta-divider" aria-hidden="true"></div>
+        <div class="index-hero-meta-item">
+          <svg data-element-type="icon" data-icon-type="svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 1a4 4 0 100 8A4 4 0 008 1zM2 14c0-2.21 2.686-4 6-4s6 1.79 6 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
+          <span>כניסה חופשית</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bottom Divider -->
+  <div class="index-hero-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,80 L0,48 Q60,38 120,46 T240,40 Q300,44 360,36 T480,42 Q540,38 600,44 T720,38 Q780,44 840,36 T960,42 Q1020,38 1080,44 T1200,40 L1200,80 Z" fill="#111220"></path>
+    </svg>
+  </div>
+
+</section>
+
+<section id="features" class="index-features-section" dir="rtl" data-layout-spec="בית-features">
+  <!-- Decorative radial purple glow -->
+  <div class="index-features-glow" aria-hidden="true"></div>
+
+  <div class="index-features-container">
+    <!-- Section Header -->
+    <div class="index-features-header">
+      <span class="index-features-eyebrow">למה להצטרף לוובינר?</span>
+      <h2 class="index-features-title">מה תקבלו מהוובינר על <span class="index-features-highlight">Vibe Coding</span></h2>
+      <p class="index-features-subtitle">וובינר vibe coding למתכנתים שרוצים לפתח תוכנה מהר יותר, חכם יותר — עם כלי AI מהדור הבא</p>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="index-features-grid">
+
+      <!-- Feature 1 -->
+      <article class="index-feature-card">
+        <div class="index-feature-icon-wrap">
+          <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" aria-hidden="true" width="32" height="32">
+            <circle cx="24" cy="24" r="20" fill="rgba(139,92,246,0.18)"></circle>
+            <polyline points="14,24 20,30 34,16" stroke="#8B5CF6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>
+            <path d="M10 36 Q24 28 38 36" stroke="#5EEAD4" stroke-width="2" stroke-linecap="round" fill="none"></path>
+          </svg>
+        </div>
+        <div class="index-feature-content">
+          <h3 class="index-feature-title">גישת Vibe Coding מאפס</h3>
+          <p class="index-feature-desc">תלמדו את הפילוסופיה שמשנה את שוק הפיתוח — כיצד לעבוד בזרימה מלאה עם AI כשותף אמיתי, ולא רק כעוזר. תבינו את החשיבה מאחורי הגישה ואיך ליישם אותה כבר מחר בבוקר.</p>
+          <ul class="index-feature-bullets">
+            <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span>עקרונות הגישה ורקע תיאורטי</span></li>
+            <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span>דמו חי בזמן אמת</span></li>
+            <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span>טיפים ליישום מיידי</span></li>
+          </ul>
+        </div>
+        <div class="index-feature-card-glow" aria-hidden="true"></div>
+      </article>
+
+      <!-- Feature 2 -->
+      <article class="index-feature-card index-feature-card--accent">
+        <div class="index-feature-icon-wrap index-feature-icon-wrap--accent">
+          <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" aria-hidden="true" width="32" height="32">
+            <circle cx="24" cy="24" r="20" fill="rgba(255,107,107,0.15)"></circle>
+            <rect x="13" y="14" width="9" height="9" rx="2" stroke="#FF6B6B" stroke-width="2.5"></rect>
+            <rect x="26" y="14" width="9" height="9" rx="2" stroke="#FF6B6B" stroke-width="2.5"></rect>
+            <rect x="13" y="27" width="9" height="9" rx="2" stroke="#5EEAD4" stroke-width="2.5"></rect>
+            <rect x="26" y="27" width="9" height="9" rx="2" stroke="#5EEAD4" stroke-width="2.5"></rect>
+          </svg>
+        </div>
+        <div class="index-feature-content">
+          <h3 class="index-feature-title">כלי AI לפיתוח תוכנה מהיר</h3>
+          <p class="index-feature-desc">גלו את הכלים המובילים לפיתוח תוכנה מהיר עם AI — Cursor, Copilot, Claude ועוד. מאור יראה לכם בדיוק איך לשלב כלי AI לפיתוח תוכנה מהיר בתהליך העבודה היומיומי שלכם.</p>
+          <ul class="index-feature-bullets">
+            <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span>סקירת הכלים החמים ביותר</span></li>
+            <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span>השוואה מעשית בין הפלטפורמות</span></li>
+            <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span>הגדרת workflow אופטימלי</span></li>
+          </ul>
+        </div>
+        <div class="index-feature-card-glow index-feature-card-glow--accent" aria-hidden="true"></div>
+      </article>
+
+      <!-- Feature 3 -->
+      <article class="index-feature-card index-feature-card--teal">
+        <div class="index-feature-icon-wrap index-feature-icon-wrap--teal">
+          <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" aria-hidden="true" width="32" height="32">
+            <circle cx="24" cy="24" r="20" fill="rgba(94,234,212,0.12)"></circle>
+            <path d="M16 32 L16 22 Q16 18 20 18 L28 18 Q32 18 32 22 L32 32" stroke="#5EEAD4" stroke-width="2.5" stroke-linecap="round" fill="none"></path>
+            <line x1="12" y1="32" x2="36" y2="32" stroke="#5EEAD4" stroke-width="2.5" stroke-linecap="round"></line>
+            <circle cx="24" cy="13" r="3" fill="#8B5CF6"></circle>
+            <line x1="24" y1="16" x2="24" y2="18" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round"></line>
+          </svg>
+        </div>
+        <div class="index-feature-content">
+          <h3 class="index-feature-title">מפגש חי עם מאור — שאלות ותשובות</h3>
+          <p class="index-feature-desc">הוובינר הוא לא הרצאה חד-כיוונית. תגיעו עם שאלות, תקבלו תשובות אמיתיות. מאור יהיה זמין לדיון חי, ישתף מניסיון אישי ויעזור לכם להתאים את הגישה לפרויקטים שלכם.</p>
+          <ul class="index-feature-bullets">
+            <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span>סשן שאלות ותשובות פתוח</span></li>
+            <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span>קהילת מתכנתים מחוברת</span></li>
+            <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span>הקלטה זמינה לנרשמים</span></li>
+          </ul>
+        </div>
+        <div class="index-feature-card-glow index-feature-card-glow--teal" aria-hidden="true"></div>
+      </article>
+
+    </div>
+    <!-- End Features Grid -->
+
+    <!-- Bottom CTA strip -->
+    <div class="index-features-cta-strip">
+      <p class="index-features-cta-text">אירוע פיתוח תוכנה מאי 2026 — יום שני, 4.5.2026 | אונליין | חינמי</p>
+      <a href="#register" class="btn-primary index-features-cta-btn">
+        <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+        אני רוצה להצטרף
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="index-about-section" data-layout-spec="בית-about" dir="rtl">
+  <!-- Decorative aurora glow -->
+  <div class="about-aurora-blob" aria-hidden="true"></div>
+  <div class="about-radial-glow" aria-hidden="true"></div>
+
+  <div class="about-container">
+    <!-- Text Side (Right) -->
+    <div class="about-text-col">
+      <div class="about-eyebrow">
+        <span class="about-eyebrow-dot"></span>
+        <span>מי אני?</span>
+      </div>
+
+      <h2 class="about-heading">
+        מאור — מפתח,
+        <span class="about-heading-gradient">מרצה ויוצר</span>
+      </h2>
+
+      <p class="about-lead">
+        אני מאור, מפתח תוכנה עם למעלה מעשור של ניסיון בבניית מוצרים דיגיטליים, ומי שהפך את ה-Vibe Coding לאורח חיים.
+      </p>
+
+      <p class="about-body">
+        במהלך השנים גיליתי שהדרך הכי מהירה ומהנה לבנות תוכנה היא לשלב בין יצירתיות, כלי AI חכמים, ו-flow אמיתי של כתיבת קוד. זה מה שאני קורא <strong>Vibe Coding</strong> — פיתוח תוכנה שמרגיש כמו אמנות.
+      </p>
+
+      <p class="about-body">
+        בוובינר הזה אני חולק את השיטות, הכלים, והמחשבות שעזרו לי ולמאות מתכנתים לעבוד מהר יותר, לחשוב בצורה יצירתית יותר, ולהנות מכל שורת קוד.
+      </p>
+
+      <!-- Stats row -->
+      <div class="about-stats">
+        <div class="about-stat-item">
+          <span class="about-stat-number">10+</span>
+          <span class="about-stat-label">שנות ניסיון</span>
+        </div>
+        <div class="about-stat-divider" aria-hidden="true"></div>
+        <div class="about-stat-item">
+          <span class="about-stat-number">500+</span>
+          <span class="about-stat-label">מתכנתים הוכשרו</span>
+        </div>
+        <div class="about-stat-divider" aria-hidden="true"></div>
+        <div class="about-stat-item">
+          <span class="about-stat-number">4.5.26</span>
+          <span class="about-stat-label">תאריך הוובינר</span>
+        </div>
+      </div>
+
+      <!-- Feature list -->
+      <ul class="about-features-list">
+        <li>
+          <span class="about-feature-icon" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </span>
+          <span>ניסיון מעשי בכלי AI לפיתוח תוכנה מהיר</span>
+        </li>
+        <li>
+          <span class="about-feature-icon" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </span>
+          <span>הדרכות בהירות ומעשיות — בלי ז'רגון מיותר</span>
+        </li>
+        <li>
+          <span class="about-feature-icon" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </span>
+          <span>תוכן רלוונטי למתכנתים, מנהלי צוותים ויזמים</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Image Side (Left) -->
+    <div class="about-image-col">
+      <div class="about-image-wrapper">
+        <!-- Floating code decoration -->
+        <div class="about-code-float" aria-hidden="true">
+          <pre><code>const vibe = () =&gt; {
+  return flow + ai + joy;
+};</code></pre>
+        </div>
+
+        <img data-placeholder="index-about-image-1" data-context="Professional photo of Maor, a software developer and educator in his 30s, sitting at a modern desk with multiple monitors showing code and AI tools. Warm studio lighting, confident and approachable expression, dark tech-themed background with purple and teal ambient glow. High-quality portrait suitable for a tech webinar landing page." width="560" height="600" src="/assets/site-index-about-image-1.webp" alt="מאור — מפתח ומרצה Vibe Coding" class="about-main-img">
+
+        <!-- Floating badge -->
+        <div class="about-badge">
+          <span class="about-badge-icon" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          </span>
+          <div class="about-badge-text">
+            <strong>Vibe Coding</strong>
+            <small>וובינר חי · 4.5.2026</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="testimonials" class="index-testimonials-section" dir="rtl" data-layout-spec="בית-testimonials">
+  <!-- Decorative aurora glow -->
+  <div class="its-aurora-blob" aria-hidden="true"></div>
+  <div class="its-aurora-blob-2" aria-hidden="true"></div>
+
+  <div class="its-container">
+    <!-- Section Header -->
+    <div class="its-header">
+      <span class="its-label">מה אומרים עלינו</span>
+      <h2 class="its-title">משתתפים שכבר חוו את הקסם</h2>
+      <p class="its-subtitle">מפתחים, מנהלי צוותים ויזמים שהשתתפו בוובינרים הקודמים של מאור — בדיוק בלשונם</p>
+    </div>
+
+    <!-- Testimonials Grid -->
+    <div class="its-grid">
+
+      <!-- Card 1 -->
+      <article class="its-card">
+        <div class="its-quote-icon" aria-hidden="true">
+          <svg data-element-type="icon" data-icon-type="svg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 20C4 24.418 7.582 28 12 28V24C9.791 24 8 22.209 8 20V18H14V8H4V20ZM18 20C18 24.418 21.582 28 26 28V24C23.791 24 22 22.209 22 20V18H28V8H18V20Z" fill="url(#quote-grad-1)"></path>
+            <defs>
+              <linearGradient id="quote-grad-1" x1="4" y1="8" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#8B5CF6"></stop>
+                <stop offset="100%" stop-color="#5EEAD4"></stop>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="its-stars" aria-label="דירוג 5 כוכבים">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+        </div>
+        <blockquote class="its-quote">
+          “הוובינר של מאור שינה לחלוטין את הדרך שבה אני כותב קוד. תוך שעה אחת הבנתי איך vibe coding יכול לחסוך לי ימים שלמים של עבודה. ממליץ בחום לכל מפתח שרוצה להישאר רלוונטי.”
+        </blockquote>
+        <footer class="its-author">
+          <div class="its-avatar">
+            <img data-placeholder="testimonial-avatar-1" data-context="Professional headshot of a young Israeli male software developer, confident smile, casual tech style" width="48" height="48" src="/assets/site-testimonial-avatar-1.webp" alt="דניאל כהן">
+          </div>
+          <div class="its-author-info">
+            <strong class="its-author-name">דניאל כהן</strong>
+            <span class="its-author-role">Senior Full-Stack Developer</span>
+          </div>
+        </footer>
+      </article>
+
+      <!-- Card 2 -->
+      <article class="its-card its-card--featured">
+        <div class="its-quote-icon" aria-hidden="true">
+          <svg data-element-type="icon" data-icon-type="svg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 20C4 24.418 7.582 28 12 28V24C9.791 24 8 22.209 8 20V18H14V8H4V20ZM18 20C18 24.418 21.582 28 26 28V24C23.791 24 22 22.209 22 20V18H28V8H18V20Z" fill="url(#quote-grad-2)"></path>
+            <defs>
+              <linearGradient id="quote-grad-2" x1="4" y1="8" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#E8426A"></stop>
+                <stop offset="100%" stop-color="#8B5CF6"></stop>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="its-stars" aria-label="דירוג 5 כוכבים">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+        </div>
+        <blockquote class="its-quote">
+          “כמנהלת צוות פיתוח, הייתי סקפטית לגבי כלי AI. מאור הראה לי בצורה מדויקת ומעשית איך לשלב vibe coding בתוך תהליכי העבודה של הצוות שלי. התוצאות בשטח מדברות בעד עצמן — פי שלוש מהירות.”
+        </blockquote>
+        <footer class="its-author">
+          <div class="its-avatar">
+            <img data-placeholder="testimonial-avatar-2" data-context="Professional headshot of an Israeli female tech team lead, approachable and professional, modern office background" width="48" height="48" src="/assets/site-testimonial-avatar-2.webp" alt="נועה לוי">
+          </div>
+          <div class="its-author-info">
+            <strong class="its-author-name">נועה לוי</strong>
+            <span class="its-author-role">VP Engineering, SaaS Startup</span>
+          </div>
+        </footer>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="its-card">
+        <div class="its-quote-icon" aria-hidden="true">
+          <svg data-element-type="icon" data-icon-type="svg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 20C4 24.418 7.582 28 12 28V24C9.791 24 8 22.209 8 20V18H14V8H4V20ZM18 20C18 24.418 21.582 28 26 28V24C23.791 24 22 22.209 22 20V18H28V8H18V20Z" fill="url(#quote-grad-3)"></path>
+            <defs>
+              <linearGradient id="quote-grad-3" x1="4" y1="8" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#5EEAD4"></stop>
+                <stop offset="100%" stop-color="#8B5CF6"></stop>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="its-stars" aria-label="דירוג 5 כוכבים">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+        </div>
+        <blockquote class="its-quote">
+          “הגעתי לוובינר כמפתח שמכיר AI בסיסי ויצאתי עם מתודולוגיה שלמה. מאור מסביר דברים מורכבים בצורה שאפשר ליישם מיד. הוובינר הבא על vibe coding הוא חובה לכל מי שעוסק בפיתוח תוכנה ב-2026.”
+        </blockquote>
+        <footer class="its-author">
+          <div class="its-avatar">
+            <img data-placeholder="testimonial-avatar-3" data-context="Professional headshot of a young Israeli male developer, friendly expression, casual startup environment" width="48" height="48" src="/assets/site-testimonial-avatar-3.webp" alt="יוסי אברהם">
+          </div>
+          <div class="its-author-info">
+            <strong class="its-author-name">יוסי אברהם</strong>
+            <span class="its-author-role">Backend Developer &amp; Indie Hacker</span>
+          </div>
+        </footer>
+      </article>
+
+      <!-- Card 4 -->
+      <article class="its-card">
+        <div class="its-quote-icon" aria-hidden="true">
+          <svg data-element-type="icon" data-icon-type="svg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 20C4 24.418 7.582 28 12 28V24C9.791 24 8 22.209 8 20V18H14V8H4V20ZM18 20C18 24.418 21.582 28 26 28V24C23.791 24 22 22.209 22 20V18H28V8H18V20Z" fill="url(#quote-grad-4)"></path>
+            <defs>
+              <linearGradient id="quote-grad-4" x1="4" y1="8" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#FF6B6B"></stop>
+                <stop offset="100%" stop-color="#8B5CF6"></stop>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="its-stars" aria-label="דירוג 5 כוכבים">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+        </div>
+        <blockquote class="its-quote">
+          “לא האמנתי שאפשר ללמוד כל כך הרבה בוובינר אחד. מאור מביא אנרגיה מדהימה וחומר פרקטי שאפשר ליישם עוד באותו יום. ממש השקעה שמחזירה את עצמה.”
+        </blockquote>
+        <footer class="its-author">
+          <div class="its-avatar">
+            <img data-placeholder="testimonial-avatar-4" data-context="Professional headshot of an Israeli female product manager, smart casual attire, warm and professional" width="48" height="48" src="/assets/site-testimonial-avatar-4.webp" alt="מיכל שפירא">
+          </div>
+          <div class="its-author-info">
+            <strong class="its-author-name">מיכל שפירא</strong>
+            <span class="its-author-role">Product Manager, FinTech</span>
+          </div>
+        </footer>
+      </article>
+
+      <!-- Card 5 -->
+      <article class="its-card">
+        <div class="its-quote-icon" aria-hidden="true">
+          <svg data-element-type="icon" data-icon-type="svg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 20C4 24.418 7.582 28 12 28V24C9.791 24 8 22.209 8 20V18H14V8H4V20ZM18 20C18 24.418 21.582 28 26 28V24C23.791 24 22 22.209 22 20V18H28V8H18V20Z" fill="url(#quote-grad-5)"></path>
+            <defs>
+              <linearGradient id="quote-grad-5" x1="4" y1="8" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#8B5CF6"></stop>
+                <stop offset="100%" stop-color="#E8426A"></stop>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="its-stars" aria-label="דירוג 5 כוכבים">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+        </div>
+        <blockquote class="its-quote">
+          “הייתי בהרבה קורסים ווובינרים על AI לפיתוח, אבל מאור הוא ברמה אחרת לגמרי. הוא מבין גם את הטכנולוגיה וגם את האנשים שמשתמשים בה. יצאתי עם כלים ועם ראייה חדשה.”
+        </blockquote>
+        <footer class="its-author">
+          <div class="its-avatar">
+            <img data-placeholder="testimonial-avatar-5" data-context="Professional headshot of an Israeli male CTO or tech lead, mature, confident, dark background" width="48" height="48" src="/assets/site-testimonial-avatar-5.webp" alt="אורי גרינברג">
+          </div>
+          <div class="its-author-info">
+            <strong class="its-author-name">אורי גרינברג</strong>
+            <span class="its-author-role">CTO, B2B SaaS Company</span>
+          </div>
+        </footer>
+      </article>
+
+      <!-- Card 6 -->
+      <article class="its-card">
+        <div class="its-quote-icon" aria-hidden="true">
+          <svg data-element-type="icon" data-icon-type="svg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 20C4 24.418 7.582 28 12 28V24C9.791 24 8 22.209 8 20V18H14V8H4V20ZM18 20C18 24.418 21.582 28 26 28V24C23.791 24 22 22.209 22 20V18H28V8H18V20Z" fill="url(#quote-grad-6)"></path>
+            <defs>
+              <linearGradient id="quote-grad-6" x1="4" y1="8" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#5EEAD4"></stop>
+                <stop offset="100%" stop-color="#FF6B6B"></stop>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="its-stars" aria-label="דירוג 5 כוכבים">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+        </div>
+        <blockquote class="its-quote">
+          “כיזמת שאינה מפתחת, חיפשתי דרך להבין טוב יותר את הצוות הטכני שלי. הוובינר של מאור נתן לי שפה משותפת עם המפתחים ותובנות אמיתיות על כלי AI לפיתוח תוכנה מהיר. מומלץ בחום!”
+        </blockquote>
+        <footer class="its-author">
+          <div class="its-avatar">
+            <img data-placeholder="testimonial-avatar-6" data-context="Professional headshot of an Israeli female entrepreneur, modern and stylish, startup atmosphere" width="48" height="48" src="/assets/site-testimonial-avatar-6.webp" alt="שירה מזרחי">
+          </div>
+          <div class="its-author-info">
+            <strong class="its-author-name">שירה מזרחי</strong>
+            <span class="its-author-role">Founder &amp; CEO, Tech Startup</span>
+          </div>
+        </footer>
+      </article>
+
+    </div><!-- /its-grid -->
+
+    <!-- Stats Bar -->
+    <div class="its-stats">
+      <div class="its-stat">
+        <span class="its-stat-number">500+</span>
+        <span class="its-stat-label">משתתפים בוובינרים הקודמים</span>
+      </div>
+      <div class="its-stat-divider" aria-hidden="true"></div>
+      <div class="its-stat">
+        <span class="its-stat-number">4.9/5</span>
+        <span class="its-stat-label">דירוג ממוצע</span>
+      </div>
+      <div class="its-stat-divider" aria-hidden="true"></div>
+      <div class="its-stat">
+        <span class="its-stat-number">97%</span>
+        <span class="its-stat-label">ממליצים לחברים</span>
+      </div>
+    </div>
+
+  </div><!-- /its-container -->
+</section>
+
+<section id="stats" class="index-stats-section" data-layout-spec="בית-stats" dir="rtl">
+  <div class="index-stats-container">
+    <div class="index-stats-header">
+      <h2 class="index-stats-title">המספרים מדברים בעד עצמם</h2>
+      <p class="index-stats-subtitle">וובינר vibe coding למתכנתים — נתונים שמוכיחים את הערך</p>
+    </div>
+    <div class="index-stats-grid">
+      <article class="index-stat-card">
+        <div class="index-stat-glow"></div>
+        <div class="index-stat-number">
+          <span class="index-stat-value">500+</span>
+        </div>
+        <div class="index-stat-divider"></div>
+        <p class="index-stat-label">משתתפים רשומים</p>
+        <p class="index-stat-desc">מפתחים ומנהלי צוותים שכבר הצטרפו</p>
+      </article>
+      <article class="index-stat-card">
+        <div class="index-stat-glow index-stat-glow--secondary"></div>
+        <div class="index-stat-number">
+          <span class="index-stat-value">3+</span>
+        </div>
+        <div class="index-stat-divider index-stat-divider--secondary"></div>
+        <p class="index-stat-label">שעות תוכן חי</p>
+        <p class="index-stat-desc">הדגמות, קוד בזמן אמת ושאלות ותשובות</p>
+      </article>
+      <article class="index-stat-card">
+        <div class="index-stat-glow index-stat-glow--accent"></div>
+        <div class="index-stat-number">
+          <span class="index-stat-value">100%</span>
+        </div>
+        <div class="index-stat-divider index-stat-divider--accent"></div>
+        <p class="index-stat-label">פרקטי ומיידי</p>
+        <p class="index-stat-desc">כלי AI לפיתוח תוכנה מהיר שתוכל ליישם מחר</p>
+      </article>
+      <article class="index-stat-card">
+        <div class="index-stat-glow"></div>
+        <div class="index-stat-number">
+          <span class="index-stat-value">1</span>
+          <span class="index-stat-unit">יום</span>
+        </div>
+        <div class="index-stat-divider"></div>
+        <p class="index-stat-label">אירוע פיתוח תוכנה מאי 2026</p>
+        <p class="index-stat-desc">יום שני, 4.5.2026 — אל תפספס</p>
+      </article>
+    </div>
+  </div>
+  <div class="index-stats-bg-decoration" aria-hidden="true">
+    <div class="index-stats-orb index-stats-orb--1"></div>
+    <div class="index-stats-orb index-stats-orb--2"></div>
+    <div class="index-stats-orb index-stats-orb--3"></div>
+  </div>
+</section>
+
+<section id="cta" class="index-cta-section" data-layout-spec="בית-cta" dir="rtl">
+  <!-- Decorative aurora glow -->
+  <div class="index-cta-aurora" aria-hidden="true"></div>
+  <!-- Decorative radial glow bottom-left -->
+  <div class="index-cta-glow-bl" aria-hidden="true"></div>
+  <!-- Floating code lines decoration -->
+  <div class="index-cta-code-lines" aria-hidden="true">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <text x="0" y="20" fill="#00D4FF" opacity="0.12" font-family="monospace" font-size="13">const vibeCode = () =&gt; {</text>
+      <text x="0" y="44" fill="#00D4FF" opacity="0.12" font-family="monospace" font-size="13">  return flow(ideas);</text>
+      <text x="0" y="68" fill="#00D4FF" opacity="0.12" font-family="monospace" font-size="13">};</text>
+      <text x="0" y="100" fill="#8B5CF6" opacity="0.15" font-family="monospace" font-size="13">import { creativity } from</text>
+      <text x="0" y="124" fill="#8B5CF6" opacity="0.15" font-family="monospace" font-size="13">  'vibe-coding-maor';</text>
+      <text x="0" y="156" fill="#5EEAD4" opacity="0.10" font-family="monospace" font-size="13">// 04.05.2026 — go live</text>
+      <text x="0" y="180" fill="#5EEAD4" opacity="0.10" font-family="monospace" font-size="13">console.log('ready!');</text>
+    </svg>
+  </div>
+
+  <div class="index-cta-container">
+    <!-- Badge -->
+    <div class="index-cta-badge">
+      <span class="index-cta-badge-dot"></span>
+      <span>וובינר vibe coding למתכנתים — יום שני, 4.5.2026</span>
+    </div>
+
+    <!-- Headline -->
+    <h2 class="index-cta-headline">מוכנים לשדרג את<br><span class="index-cta-headline-gradient">אופן הפיתוח שלכם?</span></h2>
+
+    <!-- Sub-headline -->
+    <p class="index-cta-sub">הצטרפו לוובינר החי עם מאור וגלו כיצד Vibe Coding משנה את כללי המשחק בפיתוח תוכנה מודרני.<br>מקומות מוגבלים — אל תפספסו את האירוע הזה.</p>
+
+    <!-- Value pills -->
+    <div class="index-cta-pills">
+      <div class="index-cta-pill">
+        <i class="fa-solid fa-bolt"></i>
+        <span>שיטות AI לפיתוח מהיר</span>
+      </div>
+      <div class="index-cta-pill">
+        <i class="fa-solid fa-code"></i>
+        <span>כלים מעשיים לשימוש מיידי</span>
+      </div>
+      <div class="index-cta-pill">
+        <i class="fa-solid fa-users"></i>
+        <span>קהילה של מפתחים מובילים</span>
+      </div>
+    </div>
+
+    <!-- CTA Buttons -->
+    <div class="index-cta-actions">
+      <a href="#register" class="index-cta-btn-primary">
+        <i class="fa-solid fa-rocket"></i>
+        הרשמה לוובינר — חינם!
+      </a>
+      <a href="#about" class="index-cta-btn-ghost">
+        מה נלמד בוובינר?
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+    </div>
+
+    <!-- Trust line -->
+    <p class="index-cta-trust">אירוע פיתוח תוכנה מאי 2026 · שידור חי · ללא עלות · עם מאור</p>
+  </div>
+</section>
+  </main>
+  
+  <footer class="site-footer" dir="rtl">
+  <div class="footer-glow-top"></div>
+  <div class="footer-container">
+    <div class="footer-grid">
+
+      <!-- Company Info -->
+      <div class="footer-col footer-col--brand">
+        <div class="footer-logo-wrap">
+          <img src="/assets/vibe-coding-with-maor-logo.webp" alt="vibe coding with Maor" class="logo">
+        </div>
+        <p class="footer-tagline">לומדים לכתוב קוד בצורה חכמה, יצירתית ומהנה — עם Maor.</p>
+        <div class="footer-social">
+          <a href="[facebook_handle]" aria-label="Facebook" class="social-link"><i class="fab fa-facebook-f"></i></a>
+          <a href="[instagram_handle]" aria-label="Instagram" class="social-link"><i class="fab fa-instagram"></i></a>
+          <a href="[whatsapp_handle]" aria-label="WhatsApp" class="social-link"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="footer-col">
+        <h3 class="footer-heading"><span class="heading-accent">//</span> ניווט מהיר</h3>
+        <ul class="footer-links">
+          <li><a href="#features"><i class="fas fa-chevron-left nav-arrow"></i>תכונות</a></li>
+          <li><a href="#about"><i class="fas fa-chevron-left nav-arrow"></i>אודות</a></li>
+          <li><a href="#testimonials"><i class="fas fa-chevron-left nav-arrow"></i>המלצות</a></li>
+          <li><a href="#stats"><i class="fas fa-chevron-left nav-arrow"></i>נתונים</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div class="footer-col">
+        <h3 class="footer-heading"><span class="heading-accent">//</span> צור קשר</h3>
+        <ul class="footer-contact">
+          <li>
+            <span class="contact-icon"><i class="fas fa-envelope"></i></span>
+            <span class="contact-text"><a href="mailto:[business_email]">[business_email]</a></span>
+          </li>
+          <li>
+            <span class="contact-icon"><i class="fas fa-phone"></i></span>
+            <span class="contact-text"><a href="tel:[business_phone]">[business_phone]</a></span>
+          </li>
+          <li><a href="/"><span class="contact-icon"><i class="fas fa-map-marker-alt"></i></span>
+            <span class="contact-text">[business_address]</span></a></li>
+        </ul>
+      </div>
+
+      <!-- Newsletter / CTA -->
+      <div class="footer-col footer-col--cta">
+        <h3 class="footer-heading"><span class="heading-accent">//</span> הצטרפו לקהילה</h3>
+        <p class="footer-cta-text">קבלו עדכונים, טיפים וקורסים חדשים ישירות למייל.</p>
+        <form class="footer-form" onsubmit="return false;">
+          <input type="email" class="footer-input" placeholder="האימייל שלך..." aria-label="כתובת אימייל">
+          <button type="submit" class="footer-btn">הרשמה</button>
+        </form>
+      </div>
+
+    </div>
+
+    <!-- Divider -->
+    <div class="footer-divider"></div>
+
+    <!-- Bottom Bar -->
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 vibe coding with Maor. כל הזכויות שמורות.</p>
+      <div class="footer-legal">
+        <a href="/privacy">מדיניות פרטיות</a>
+        <span class="legal-sep">·</span>
+        <a href="/terms">תנאי שימוש</a>
+        <span class="legal-sep">·</span>
+        <a href="/accessibility">נגישות</a>
+        <span class="legal-sep">·</span>
+        <a href="https://zappy5.com" target="_blank" class="zappy-attribution">נוצר באמצעות Zappy</a>
+      </div>
+    </div>
+
+  </div>
+  <div class="footer-grid-overlay"></div>
+</footer>
+  
+  <a href="https://wa.me/[whatsapp_handle]" class="whatsapp-float" aria-label="WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+  
+  <div data-integration="accessibility:toolbar"></div>
+
+    <script src="/script.js"></script>
+
+    <script id="zappy-mobile-submenu-script">
+    (function() {
+      function initMobileSubmenuToggles() {
+        if (window.innerWidth > 768) {
+          document.querySelectorAll('.mobile-submenu-toggle').forEach(function(btn) { btn.remove(); });
+          document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) { menu.classList.remove('mobile-expanded'); });
+          return;
+        }
+        var items = document.querySelectorAll('.nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu)');
+        items.forEach(function(li) {
+          if (li.querySelector('.mobile-submenu-toggle')) return;
+          var submenu = li.querySelector('.sub-menu');
+          var parentLink = li.querySelector(':scope > a');
+          if (!submenu || !parentLink) return;
+          var toggleBtn = document.createElement('button');
+          toggleBtn.className = 'mobile-submenu-toggle';
+          toggleBtn.setAttribute('aria-label', 'Toggle submenu');
+          toggleBtn.setAttribute('type', 'button');
+          parentLink.insertAdjacentElement('afterend', toggleBtn);
+          toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) {
+              if (menu !== submenu) { menu.classList.remove('mobile-expanded'); var t = menu.parentElement.querySelector('.mobile-submenu-toggle'); if(t) t.classList.remove('expanded'); }
+            });
+            submenu.classList.toggle('mobile-expanded');
+            toggleBtn.classList.toggle('expanded');
+          });
+        });
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initMobileSubmenuToggles); }
+      else { initMobileSubmenuToggles(); }
+      var resizeTimer; window.addEventListener('resize', function() { clearTimeout(resizeTimer); resizeTimer = setTimeout(initMobileSubmenuToggles, 250); });
+      // Re-initialize when mobile menu becomes visible (MutationObserver)
+      var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes') {
+            var target = mutation.target;
+            if (target.classList && (target.classList.contains('active') || target.classList.contains('open'))) {
+              setTimeout(initMobileSubmenuToggles, 100);
+            }
+          }
+        });
+      });
+      setTimeout(function() {
+        document.querySelectorAll('.mobile-menu, .nav-menu, #navMenu, nav').forEach(function(menu) {
+          observer.observe(menu, { attributes: true, attributeFilter: ['class', 'style'] });
+        });
+      }, 500);
+    })();
+    </script>
+</body>
+</html>
