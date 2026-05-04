@@ -1,4 +1,6 @@
-# Business — Generative Engine Optimization Map
+# vibe coding with Maor — Generative Engine Optimization Map
+
+> A landing page for a live online webinar about 'Vibe Coding' — a modern, trending approach to software development. The event takes place on Monday, May 4th, 2026. The page needs to capture registrations and communicate the value of attending this educational tech event.
 
 ---
 
@@ -24,12 +26,33 @@ Information about WCAG compliance and accessibility features.
 
 ---
 
-# Business Context (for LLM understanding)
+## How to Contact Us
 
-## About Business
+- (No contact details configured yet.)
+
 ---
 
-# Additional Resources
+# Business Context (for LLM understanding)
 
-- **Sitemap**: https://example.com/sitemap.xml
-- **Robots.txt**: https://example.com/robots.txt
+## About vibe coding with Maor
+A landing page for a live online webinar about 'Vibe Coding' — a modern, trending approach to software development. The event takes place on Monday, May 4th, 2026. The page needs to capture registrations and communicate the value of attending this educational tech event.
+
+## Services/Products
+- וובינר בנושא vibe coding
+- אירוע ב-4.5.2026 (יום שני)
+
+## Target Audience
+- מתכנתים מאמצים מוקדמים
+- מחנכים בתחום הטכנולוגיה
+- מנהלי צוותים בפיתוח תוכנה
+
+## Industry
+טכנולוגיה / פיתוח תוכנה / חינוך
+
+---
+
+# Machine-readable feeds
+
+- Sitemap (XML): https://example.com/sitemap.xml
+- Robots: https://example.com/robots.txt
+- Flattened page text (for LLMs): https://example.com/llms-full.txt
